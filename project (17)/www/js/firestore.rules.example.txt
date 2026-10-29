@@ -1,0 +1,44 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+  match /conversations/{convId} {
+  allow read, write: if true;
+
+  match /messages/{messageId} {
+    allow read, write: if true;
+  }
+}
+
+    match /calls/{convId} {
+      allow read, write: if true;
+
+      match /callerCandidates/{docId} {
+        allow read, write: if true;
+      }
+      match /calleeCandidates/{docId} {
+        allow read, write: if true;
+      }
+    }
+
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    match /skills/{skillId} {
+      allow read, write: if true;
+    }
+
+    // ブロックリスト：本来は本人しか読み書きできないのが理想だが、
+    // Firebase Authを使っていないため厳密な制限は掛けられない。
+    // （本名・メール等は含まないので、公開されても実害は小さい）
+    match /blocks/{userId} {
+      allow read, write: if true;
+    }
+
+    // 通報：運営が確認できるよう全件保存する
+    match /reports/{reportId} {
+      allow read, write: if true;
+    }
+  }
+}
